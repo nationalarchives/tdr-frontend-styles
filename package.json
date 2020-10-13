@@ -1,6 +1,6 @@
 {
   "name": "@nationalarchives/tdr-frontend-styles",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Repository for TDR frontend common styling",
   "files": [
     "/public/"

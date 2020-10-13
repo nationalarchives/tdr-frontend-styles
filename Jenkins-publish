@@ -1,0 +1,9 @@
+library("tdr-jenkinslib")
+
+def currentGitCommit = sh(script: "git log -n 1", returnStdout: true).trim()
+
+npmPublishJob(
+  buildCommand: "build-package",
+  version: "patch",
+  currentGitCommit: currentGitCommit
+)

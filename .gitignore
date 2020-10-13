@@ -1,0 +1,8 @@
+.idea
+public
+node_modules
+
+src/tdr/assets/fonts/*
+src/tdr/javascripts/*
+src/tdr/assets/images/govuk-*
+src/tdr/*.css

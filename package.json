@@ -1,0 +1,55 @@
+{
+  "name": "@nationalarchives/tdr-frontend-styles",
+  "version": "0.0.1",
+  "description": "Repository for TDR frontend common styling",
+  "files": [
+    "/public/"
+  ],
+  "scripts": {
+    "copy-govuk-image-assets": "copyfiles -f node_modules/govuk-frontend/govuk/assets/images/* src/tdr/assets/images -e node_modules/govuk-frontend/govuk/assets/images/favicon*",
+    "copy-govuk-font-assets": "copyfiles -f node_modules/govuk-frontend/govuk/assets/fonts/* src/tdr/assets/fonts",
+    "copy-govuk-js-assets": "copyfiles -f node_modules/govuk-frontend/govuk/all.js src/tdr/javascripts",
+    "copy-tdr-src": "cp -a ./src/tdr/ ./public/",
+    "copy-assets": "npm-run-all copy-govuk-image-assets copy-govuk-font-assets copy-govuk-js-assets",
+    "sass-compile": "node-sass ./src/tdr/sass/main.scss ./src/tdr/main.css",
+    "build-css": "npm-run-all sass-compile",
+    "build:local": "npm-run-all copy-assets build-css",
+    "build:package": "npm-run-all copy-assets copy-tdr-src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nationalarchives/tdr-frontend-styles.git"
+  },
+  "author": "The National Archives",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/nationalarchives/tdr-frontend-styles/issues"
+  },
+  "homepage": "https://github.com/nationalarchives/tdr-frontend-styles#readme",
+  "dependencies": {
+    "govuk-frontend": "^3.9.1",
+    "unfetch": "^4.1.0"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.0",
+    "dts-bundle": "^0.7.3",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
+    "minify": "^6.0.0",
+    "node-sass": "^4.14.1",
+    "npm-check": "^5.9.2",
+    "npm-run-all": "^4.1.5",
+    "postcss-cli": "^7.1.2",
+    "prettier": "2.1.2",
+    "stylelint": "^13.7.2",
+    "stylelint-config-sass-guidelines": "^7.1.0"
+  },
+  "lint-staged": {
+    "src/tdr/sass/**/*.scss": "stylelint"
+  }
+}

@@ -1,0 +1,77 @@
+library("tdr-jenkinslib")
+
+def versionTag = "v${env.BUILD_NUMBER}"
+def repo = "tdr-frontend-styles"
+
+pipeline {
+  agent {
+    label "master"
+  }
+
+  stages {
+    stage("Run git secrets") {
+      steps {
+        script {
+          tdr.runGitSecrets(repo)
+        }
+      }
+    }
+    stage("Check package build") {
+      agent {
+        ecs {
+          inheritFrom "npm"
+        }
+      }
+      steps {
+        script {
+          tdr.reportStartOfBuildToGitHub(repo, env.GIT_COMMIT)
+        }
+        checkout scm
+        sh 'npm ci'
+        sh 'npm run build-local'
+        sh 'npx stylelint **/**/*.scss'
+      }
+    }
+    stage('Post-build') {
+      when {
+        expression { env.BRANCH_NAME == "master"}
+      }
+      stages {
+        stage('Tag Release') {
+          steps {
+            sh "git tag ${versionTag}"
+            sshagent(['github-jenkins']) {
+              sh("git push origin ${versionTag}")
+            }
+          }
+        }
+        stage('Publish package') {
+          steps {
+            build(
+              job: "TDR Frontend Styles Publish",
+              parameters: [
+                string(name: "VERSION", value: "patch")
+              ],
+              wait: false)
+          }
+        }
+      }
+    }
+  }
+  post {
+    failure {
+      node('master') {
+        script {
+          tdr.reportFailedBuildToGitHub(repo, env.GIT_COMMIT)
+        }
+      }
+    }
+    success {
+      node('master') {
+        script {
+          tdr.reportSuccessfulBuildToGitHub(repo, env.GIT_COMMIT)
+        }
+      }
+    }
+  }
+}
